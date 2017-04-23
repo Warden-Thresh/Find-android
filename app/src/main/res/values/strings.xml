@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Find</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    <string name="swen">新闻</string>
+    <string name="video">视频</string>
+    <string name="wea">天气</string>
+    <string name="title_activity_web_news">WebNewsActivity</string>
+    <string name="tip_drag">长按编辑,拖拽排序</string>
+    <string name="my_cahnnel">我的频道</string>
+    <string name="other_channel">其他频道</string>
+    <string name="edit">编辑</string>
+    <string name="finish">完成</string>
+    <string name="clicktoretry">点击重试</string>
+    <string name="pushtorefresh">上拉刷新...</string>
+    <string name="switchchannel">切换栏目</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="apple">逆向思维</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 </resources>
