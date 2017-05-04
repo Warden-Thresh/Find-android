@@ -1,10 +1,15 @@
 package com.warden.find.utils;
 
+import android.util.Log;
+
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -45,5 +50,36 @@ public class OkHttpUtils {
         }
 
         return str;
+    }
+
+    public static String sendOkHttpPost(String url, RequestBody formBody){
+
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response.isSuccessful())
+        {
+            String str = null;
+            try {
+                str = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("服务器响应为: " + str);
+            return str;
+
+        }
+        //client.newCall(request).enqueue(callback);
+     return "";
     }
 }

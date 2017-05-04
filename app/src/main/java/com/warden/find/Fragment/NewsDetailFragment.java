@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,15 +31,21 @@ import com.warden.find.contract.NewsDetailContract;
 import com.warden.find.model.Ads;
 import com.warden.find.model.NewsModel;
 import com.warden.find.presenter.NewsDetailPresenter;
+import com.warden.find.utils.Tabs;
 import com.warden.find.utils.ToastUtils;
 import com.warden.find.utils.Url;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * Created by WangChenchen on 2016/8/18.
@@ -85,7 +92,15 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
 
         // 创建presenter
         mPresenter = new NewsDetailPresenter(this);
-        mPresenter.loadData(getUrl(mHint), mHint);
+        if (Arrays.asList(Tabs.KMUSTTAB).contains(mHint)){
+            mPresenter.loadKmustJobData(getRequestBody(mHint),"http://job.kmust.edu.cn/jy/ajax.action",mHint);
+
+        }else {
+            mPresenter.loadData(getUrl(mHint), mHint);
+            Log.d("Url:",getUrl(mHint));
+        }
+
+
 
         return view;
     }
@@ -131,6 +146,7 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
     public static NewsDetailFragment newInstance(String hint) {
         Bundle data = new Bundle();
         data.putString("hint", hint);
+        Log.d("hint",hint);
         NewsDetailFragment fragment = new NewsDetailFragment();
         fragment.setArguments(data);
         return fragment;
@@ -138,6 +154,37 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
 
     public void resetFragmentData(String hint) {
         this.mHint = hint;
+    }
+
+    private RequestBody getRequestBody(String hint){
+        FormBody.Builder builder = new FormBody.Builder();
+        switch (hint) {
+            case "昆工招聘":
+                builder.add("transcode","22010010");
+                builder.add("mis_unpack_value","{opttype:'xiaoyuanandwebzpmore',pageSize:20,zphtype:1}");
+                builder.add("pageNo",String.valueOf((page/10)+1));
+                Log.d("pageNo",String.valueOf((page/10)+1));
+                builder.add("searchvalue","");
+                Log.d("pageNo",builder.build().toString());
+                return builder.build();
+            case "大型招聘会":
+                builder.add("transcode","20010011");
+                builder.add("mis_unpack_value","{opttype:'bigzphmore',pageSize:20}");
+                builder.add("pageNo",String.valueOf((page/10)+1));
+                Log.d("pageNo",String.valueOf((page/10)+1));
+                builder.add("searchvalue","");
+                Log.d("pageNo",builder.build().toString());
+                return builder.build();
+            case "网络招聘会":
+                builder.add("transcode","22010010");
+                builder.add("mis_unpack_value","{opttype:'xiaoyuanandwebzpmore',pageSize:20,zphtype:0}");
+                builder.add("pageNo",String.valueOf((page/10)+1));
+                Log.d("pageNo",String.valueOf((page/10)+1));
+                builder.add("searchvalue","");
+                Log.d("pageNo",builder.build().toString());
+                return builder.build();
+        }
+        return null;
     }
 
     @NonNull
@@ -203,13 +250,25 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
                 return generateUrl(Url.MSG_ID);
             case "军事":
                 return generateUrl(Url.MILITARY_ID);
+            case "x":
+                return articleUrl(Url.Article_TYPE_ID);
+            case "y":
+                return articleUrl(Url.Article_SELF_ID);
         }
         return "";
     }
 
     @NonNull
     private String generateUrl(String id) {
+
         return Url.PRE_NEWS + id + page + "-" + (page + 10) + ".html";
+
+    }
+
+    private String articleUrl(String id){
+        int index = (page/10)+1;
+        return Url.Article_List+id+"&page="+index;
+
     }
 
     @Override
@@ -251,7 +310,12 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
             @Override
             public void onRefresh() {
                 page = 0;
-                mPresenter.loadRefreshData(getUrl(mHint), mHint);
+                if (Arrays.asList(Tabs.KMUSTTAB).contains(mHint)){
+                    mPresenter.loadRefreshKmustJobData(getRequestBody(mHint),"http://job.kmust.edu.cn/jy/ajax.action");
+
+                }else {
+                    mPresenter.loadRefreshData(getUrl(mHint), mHint);
+                }
             }
         });
 
@@ -295,7 +359,12 @@ public class NewsDetailFragment extends Fragment implements NewsDetailAdapter.On
                     if (adapter.getItemCount() < 360) {
                         adapter.changeLoadStatus(NewsDetailAdapter.LOADING);
                         page += 10;
-                        mPresenter.loadMoreData(getUrl(mHint), mHint);
+                        if (Arrays.asList(Tabs.KMUSTTAB).contains(mHint)){
+                            mPresenter.loadMoreKmustJobData(getRequestBody(mHint),"http://job.kmust.edu.cn/jy/ajax.action");
+
+                        }else {
+                            mPresenter.loadMoreData(getUrl(mHint), mHint);
+                        }
                     } else {
                         adapter.changeLoadStatus(NewsDetailAdapter.NO_MORE_DATA);
                     }

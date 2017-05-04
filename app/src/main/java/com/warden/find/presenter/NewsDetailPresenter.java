@@ -4,19 +4,26 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.warden.find.Fragment.NewsDetailFragment;
 import com.warden.find.contract.NewsDetailContract;
+import com.warden.find.gson.KmustJob;
 import com.warden.find.model.NewsModel;
 import com.warden.find.model.NewsWrapper;
+import com.warden.find.spider.Spider1024;
 import com.warden.find.utils.NetUtils;
 import com.warden.find.utils.OkHttpUtils;
 import com.warden.find.utils.ToastUtils;
 
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.RequestBody;
 
 /**
  * Created by WangChenchen on 2016/8/19.
@@ -57,18 +64,13 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
             return;
         }
 
-        int connectedType = NetUtils.getConnectedType(((Fragment) mView).getActivity());
-        if (connectedType == 0) {
-            ToastUtils.show("当前网络为移动网络", (((Fragment) mView).getActivity()));
-
-
-        }
 
         new Thread() {
             @Override
             public void run() {
                 try {
                     List<NewsModel> list = getList(url, tab);
+                    Log.d("url:",url+tab);
                     if (list.size() > 0) {
                         mView.setList(list);
                         mHandler.sendEmptyMessage(ON_SUCCESS);
@@ -83,6 +85,54 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
         }.start();
     }
 
+    public void loadKmustJobData(final RequestBody formBody,final String url, final String tab) {
+        boolean isNetWorkConnected = NetUtils.isNetworkConnected(((Fragment) mView).getActivity());
+        if (!isNetWorkConnected) {
+            ToastUtils.show("网络不可用，请检查网络后再试。", (((Fragment) mView).getActivity()));
+            mView.retry();
+            return;
+        }
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    List<NewsModel> list = getKmustJobList(formBody,url);
+
+                    if (list.size() > 0) {
+                        mView.setList(list);
+                        mHandler.sendEmptyMessage(ON_SUCCESS);
+                    }
+                    else
+                        mHandler.sendEmptyMessage(ON_FAILURE);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    private List<NewsModel> getKmustJobList(final RequestBody formBody,final String url){
+        String str = OkHttpUtils.sendOkHttpPost(url,formBody);
+        Gson gson = new Gson();
+        List<NewsModel> list = new ArrayList<>();
+        KmustJob kmustJob = gson.fromJson(str,KmustJob.class);
+        for (KmustJob.ResultlistBean k:kmustJob.getResultlist()
+                ) {
+            NewsModel n = new NewsModel();
+            n.title = k.getZPHMC();
+            Log.d("MC",k.getZPHMC());
+            n.docid = k.getID();
+            n.type = "KmustJob";
+            n.source = k.getZPHDD();
+//            Log.d("url:",n.source);
+            n.time = k.getZPHSJ();
+            list.add(n);
+        }
+        return  list;
+    }
     private List<NewsModel> getList(String url, String tab) {
         List<NewsModel> list = new ArrayList<>();
         String str = OkHttpUtils.getResponse(url);
@@ -208,6 +258,45 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
                 NewsWrapper.MilitaryWrapper miw = gson.fromJson(str, NewsWrapper.MilitaryWrapper.class);
                 list = miw.T1348648141035;
                 break;
+            case "":
+            case "x":
+                List<NewsModel> imageModelList = DataSupport.where("type = ?","1024").find(NewsModel.class);
+                //if (imageModelList.size() != 0 ){
+                //    list = imageModelList;
+               // }
+               // else {
+                    list = Spider1024.doGet(url);
+              //  }
+
+
+                Log.d("List",list.toString());
+                break;
+            case "y":
+                //List<NewsModel> imageModelList = DataSupport.where("type = ?","1024").find(NewsModel.class);
+                //if (imageModelList.size() != 0 ){
+                //    list = imageModelList;
+                // }
+                // else {
+                list = Spider1024.doGet(url);
+                //  }
+
+
+                Log.d("List",list.toString());
+                break;
+            default:
+                //List<NewsModel> imageModelList = DataSupport.where("type = ?","1024").find(NewsModel.class);
+                //if (imageModelList.size() != 0 ){
+                //    list = imageModelList;
+                // }
+                // else {
+                list = Spider1024.doGet(url);
+                //  }
+
+
+                Log.d("List",list.toString());
+                break;
+
+
 
         }
         return list;
@@ -222,17 +311,36 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
             return;
         }
 
-        int connectedType = NetUtils.getConnectedType(((Fragment) mView).getActivity());
-        if (connectedType == 0) {
-            ToastUtils.show("当前网络为移动网络，请到wifi环境下重试。", (((Fragment) mView).getActivity()));
-            mView.retry();
-            return;
-        }
 
         new Thread() {
             @Override
             public void run() {
                 List<NewsModel> list = getList(url, tab);
+                if (list.size() > 0) {
+                    mView.setList(list);
+                    ((NewsDetailFragment) mView).mHandler.sendEmptyMessage(((NewsDetailFragment) mView).ON_REFRESH_SUCCESS);
+                }
+                else
+                    ((NewsDetailFragment) mView).mHandler.sendEmptyMessage(((NewsDetailFragment) mView).ON_REFRESH_FAILURE);
+
+            }
+        }.start();
+    }
+
+    public void loadRefreshKmustJobData(final RequestBody formBody,final String url) {
+        // 加载数据、解析并给mView的nmList
+        boolean isNetWorkAccessed = NetUtils.isNetworkConnected(((Fragment) mView).getActivity());
+        if (!isNetWorkAccessed) {
+            ToastUtils.show("网络不可用，请检查网络后再试。", (((Fragment) mView).getActivity()));
+            return;
+        }
+
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                List<NewsModel> list = getKmustJobList(formBody,url);
                 if (list.size() > 0) {
                     mView.setList(list);
                     ((NewsDetailFragment) mView).mHandler.sendEmptyMessage(((NewsDetailFragment) mView).ON_REFRESH_SUCCESS);
@@ -253,11 +361,6 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
             return;
         }
 
-        int connectedType = NetUtils.getConnectedType(((Fragment) mView).getActivity());
-        if (connectedType == 0) {
-            ToastUtils.show("当前网络为移动网络!", (((Fragment) mView).getActivity()));
-
-        }
 
         new Thread() {
             @Override
@@ -273,5 +376,27 @@ public class NewsDetailPresenter implements NewsDetailContract.Presenter {
         }.start();
     }
 
+    public void loadMoreKmustJobData(final RequestBody formBody,final String url) {
+        // 加载数据、解析并给mView的nmList
+        boolean isNetWorkAccessed = NetUtils.isNetworkConnected(((Fragment) mView).getActivity());
+        if (!isNetWorkAccessed) {
+            ToastUtils.show("网络不可用，请检查网络后再试。", (((Fragment) mView).getActivity()));
+            return;
+        }
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                List<NewsModel> list = getKmustJobList(formBody,url);
+                if (list.size() > 0) {
+                    mView.setList(list);
+                    ((NewsDetailFragment) mView).mHandler.sendEmptyMessage(((NewsDetailFragment) mView).ON_LOAD_MORE_SUCCESS);
+                } else
+                    ((NewsDetailFragment) mView).mHandler.sendEmptyMessage(((NewsDetailFragment) mView).ON_LOAD_MORE_FAILURE);
+
+            }
+        }.start();
+    }
 
 }

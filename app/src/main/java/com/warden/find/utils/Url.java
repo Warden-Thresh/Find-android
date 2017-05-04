@@ -6,6 +6,7 @@ package com.warden.find.utils;
 public class Url {
 
     public static final String HOST = "http://c.m.163.com/";
+    public static final String HOST1024 = "http://1024.luj8le.com/pw/";
     public static final String END_URL = "-10.html";
     public static final String ENDDETAIL_URL = "/full.html";
 
@@ -110,5 +111,13 @@ public class Url {
     public static final String VIDEO_CHOICE_ID = "00850FRB";
 
     public static final String weatherUrl = "https://api.thinkpage.cn/";
+
+
+    public static final String Article_List = HOST1024+"thread.php?fid=";
+    public static final String Article_TYPE_ID = "14";
+    public static final String Article_SELF_ID = "15";
+    public static final String Article = HOST1024+"htm_data/14/1705/";
+
+
 
 }

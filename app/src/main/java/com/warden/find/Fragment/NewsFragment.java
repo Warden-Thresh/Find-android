@@ -22,6 +22,7 @@ import com.warden.find.R;
 import com.warden.find.adapter.ChannelAdapter;
 import com.warden.find.adapter.ItemDragHelperCallback;
 import com.warden.find.adapter.NewsAdapter;
+import com.warden.find.utils.Tabs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,12 +37,7 @@ import butterknife.Unbinder;
  */
 public class NewsFragment extends Fragment {
 
-    private String[] tabs = {"头条", "体育", "娱乐", "财经", "科技", "电影", "汽车", "笑话", "游戏", "足球"
-            , "时尚", "情感", "精选", "电台"
-            , "NBA", "数码", "移动", "彩票"
-            , "教育", "论坛", "旅游", "手机"
-            , "博客", "社会", "家居", "暴雪游戏"
-            , "亲子", "CBA", "消息", "军事"};
+    private String[] tabs = Tabs.TAB;
 
     @BindView(R.id.btn_tab_select)
     View btn_tab_select;

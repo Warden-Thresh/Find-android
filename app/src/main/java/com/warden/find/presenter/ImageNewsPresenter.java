@@ -56,7 +56,7 @@ public class ImageNewsPresenter implements NewsDetailContract.Presenter {
         int connectedType = NetUtils.getConnectedType((Activity) mView);
         if (connectedType == 0) {
             ToastUtils.show("当前网络为移动网络", ((Activity) mView));
-            mView.retry();
+        //    mView.retry();
 
         }
         new Thread() {

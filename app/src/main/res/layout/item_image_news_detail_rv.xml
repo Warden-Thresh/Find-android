@@ -25,7 +25,7 @@
             android:background="@mipmap/loading"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:scaleType="fitXY" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/iv_center_item_image"
@@ -37,7 +37,7 @@
             android:background="@mipmap/loading"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:scaleType="fitXY" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/iv_right_item_image"
@@ -48,7 +48,7 @@
             android:background="@mipmap/loading"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:scaleType="fitXY" />
+            android:scaleType="centerCrop" />
     </LinearLayout>
 
     <LinearLayout
