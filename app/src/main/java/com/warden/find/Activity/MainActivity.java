@@ -14,10 +14,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.warden.find.Fragment.AppleFragment;
 import com.warden.find.Fragment.NewsFragment;
 import com.warden.find.R;
 import com.warden.find.model.ItemModelOfDrawerList;
@@ -33,7 +30,6 @@ import com.warden.find.model.ItemModelOfDrawerList;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -48,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private int currentFragmentId = 0;
     private long firstPressTime = 0;
     private Fragment currentFragment;
-
     private Unbinder unbinder;
     private List<ItemModelOfDrawerList> items = new ArrayList<>();
     @Override
@@ -113,18 +108,12 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
 
         } else {
-            currentFragment = new AppleFragment();
+            currentFragment = new NewsFragment();
             newsFragment = new NewsFragment();
-            //videoFragment = new VideoFragment();
-            //weatherFragment = new WeatherFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_content, currentFragment, "apple")
-                    //.add(R.id.fragment_content, videoFragment, "video")
-                    //.add(R.id.fragment_content, weatherFragment, "weather")
+            fragmentManager.beginTransaction().add(R.id.fragment_content, currentFragment, "news")
                     .add(R.id.fragment_content, newsFragment, "news")
                     .show(currentFragment)
                     .hide(newsFragment)
-                   // .hide(videoFragment)
-                    //.hide(weatherFragment)
                     .commit();
         }
 
@@ -132,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
         // 这句话保证title能被修改
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setTitle("苹果");
+
+        toolbar.setTitle("新闻");
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -147,20 +136,30 @@ public class MainActivity extends AppCompatActivity {
         items.add(new ItemModelOfDrawerList(R.mipmap.video_icon, "视频"));
         items.add(new ItemModelOfDrawerList(R.mipmap.weather_icon, "天气"));
 
-        navView.setCheckedItem(R.id.nav_call);
+        navView.setCheckedItem(R.id.nav_news);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 mDrawerLayout.closeDrawers();
                 switch (item.getItemId()) {
-                    case R.id.nav_location:
-                        switchFragment(1);
-                        break;
-                    case R.id.nav_call:
+                    case R.id.nav_news:
                         switchFragment(0);
                         break;
-
+                    case R.id.nav_eol:
+                        switchFragment(1);
+                        break;
+                    case R.id.nav_educational_administration:
+                        switchFragment(2);
+                        break;
+                    case R.id.nav_library:
+                        switchFragment(3);
+                        break;
+                    case R.id.nav_campus_card:
+                        switchFragment(4);
+                        break;
+                    case R.id.nav_campus_network:
+                        switchFragment(5);
+                        break;
                 }
                 return true;
             }
@@ -222,20 +221,28 @@ public class MainActivity extends AppCompatActivity {
         switch (fragmentId)
         {
             case 0:
-                toFragment = fragmentManager.findFragmentByTag("apple");
-                toolbar.setTitle("苹果");
-                break;
-            case 1:
                 toFragment = fragmentManager.findFragmentByTag("news");
                 toolbar.setTitle("新闻资讯");
                 break;
+            case 1:
+                toFragment = fragmentManager.findFragmentByTag("news");
+                toolbar.setTitle("教育在线");
+                break;
             case 2:
                 toFragment = fragmentManager.findFragmentByTag("video");
-                toolbar.setTitle("视频");
+                toolbar.setTitle("教务平台");
                 break;
             case 3:
                 toFragment = fragmentManager.findFragmentByTag("weather");
-                toolbar.setTitle("天气");
+                toolbar.setTitle("图书馆");
+                break;
+            case 4:
+                toFragment = fragmentManager.findFragmentByTag("weather");
+                toolbar.setTitle("校园卡");
+                break;
+            case 5:
+                toFragment = fragmentManager.findFragmentByTag("weather");
+                toolbar.setTitle("校园网");
                 break;
         }
         fragmentTransaction.hide(currentFragment).show(toFragment).commit();

@@ -2,26 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_call"
-            android:icon="@drawable/nav_call"
-            android:title="Call"/>
+            android:id="@+id/nav_news"
+            android:icon="@drawable/nav_news"
+            android:title="新闻资讯"/>
         <item
-            android:id="@+id/nav_friends"
-            android:icon="@drawable/nav_friends"
-            android:title="Friends"
+            android:id="@+id/nav_eol"
+            android:icon="@drawable/nav_eol"
+            android:title="教育在线"
             />
         <item
-            android:id="@+id/nav_location"
-            android:icon="@drawable/nav_location"
-            android:title="Location"/>
+            android:id="@+id/nav_educational_administration"
+            android:icon="@drawable/nav_education_administration"
+            android:title="教务平台"/>
         <item
-            android:id="@+id/nav_mail"
-            android:icon="@drawable/nav_mail"
-            android:title="Mail"/>
+            android:id="@+id/nav_library"
+            android:icon="@drawable/nav_library"
+            android:title="图书馆"/>
         <item
-            android:id="@+id/nav_task"
-            android:icon="@drawable/nav_task"
-            android:title="Tasks"/>
+            android:id="@+id/nav_campus_card"
+            android:icon="@drawable/nav_campus_card"
+            android:title="校园卡"/>
+        <item
+            android:id="@+id/nav_campus_network"
+            android:icon="@drawable/nav_campus_network"
+            android:title="校园网"/>
 
     </group>
 
